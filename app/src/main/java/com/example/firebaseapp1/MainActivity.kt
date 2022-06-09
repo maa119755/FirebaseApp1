@@ -10,9 +10,9 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ValueEventListener {
     val database = Firebase.database
-    val myRef = database.getReference("")
+    val myRef = database.getReference("1")
 
     private var i = 1
 
@@ -20,17 +20,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         button.setOnClickListener { myRef.setValue(i++) }
-        myRef.addValueEventListener(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("TAG", snapshot.toString())
-                textViewSnapshot.text = snapshot.toString()
-            }
+        database.getReference("").addValueEventListener(this)
+    }
 
-            override fun onCancelled(error: DatabaseError) {
-//                TODO("Not yet implemented")
+    override fun onDataChange(snapshot: DataSnapshot) {
+        Log.d("TAG", snapshot.toString())
+        if (snapshot.hasChildren()) {
+            val sb = StringBuilder()
+            for (s in snapshot.children) {
+                sb.appendLine(s.toString())
             }
+            textViewSnapshot.text = sb.toString()
+        } else {
+            textViewSnapshot.text = snapshot.toString()
+        }
+    }
 
-        })
+    override fun onCancelled(error: DatabaseError) {
     }
 
 }
