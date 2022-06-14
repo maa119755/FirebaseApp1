@@ -21,23 +21,23 @@ import kotlin.concurrent.thread
 class MyReceiver : BroadcastReceiver(), ValueEventListener {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val database = Firebase.database
-        val myRef = database.getReference("1")
-        myRef.addListenerForSingleValueEvent(this)
+        Firebase.database.getReference("1").addListenerForSingleValueEvent(this)
 
         val newIntent = Intent(context, this.javaClass)
         val pi = PendingIntent.getBroadcast(context, 0, newIntent, 0)
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000, pi)
 
-        database.getReference(Build.VERSION.SDK_INT.toString()).setValue("${Calendar.getInstance().time.toString()}")
+        Firebase.database.getReference(Build.VERSION.SDK_INT.toString()).setValue("${Calendar.getInstance().time.toString()}")
     }
 
     override fun onDataChange(snapshot: DataSnapshot) {
         Log.d("TAG", snapshot.toString())
-        if (snapshot.value != null && snapshot.value == 0)
+        val v = snapshot.value
+        if (v != null && v is Long && v == 0)
             return
-        Firebase.database.getReference("1").setValue(0)
+        Firebase.database.getReference("1").setValue(0L)
+        Firebase.database.getReference("2").setValue("${Calendar.getInstance().time.toString()}")
 
         thread {
             try {

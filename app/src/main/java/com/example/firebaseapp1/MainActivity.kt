@@ -1,5 +1,9 @@
 package com.example.firebaseapp1
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +25,11 @@ class MainActivity : AppCompatActivity(), ValueEventListener {
         setContentView(R.layout.activity_main)
         button.setOnClickListener { myRef.setValue(i++) }
         database.getReference("").addValueEventListener(this)
+
+        val newIntent = Intent(this, MyReceiver::class.java)
+        val pi = PendingIntent.getBroadcast(this, 0, newIntent, 0)
+        val am = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000, pi)
     }
 
     override fun onDataChange(snapshot: DataSnapshot) {
