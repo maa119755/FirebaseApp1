@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity(), ValueEventListener {
     val database = Firebase.database
     val myRef = database.getReference("1")
 
-    private var i = 1
+    private var i = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
